@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 const { KakaoShareLink } = NativeModules;
 
 /**
@@ -212,6 +212,32 @@ export declare type CustomTemplateType = {
 };
 
 /**
+ * BrowserNotFoundError
+ * @description 카카오톡 미설치 시 브라우저를 통해 공유하기 기능이 실행되는데 브라우저를 찾지 못한 경우 발생하는 에러
+ */
+export class BrowserNotFoundError extends Error {}
+const ANDROID_BROWSER_NOT_FOUND_ERROR_CODE = 'E_KAKAO_NO_BROWSER';
+
+const handleError = ({
+  error,
+  callback,
+}: {
+  error: Error & { code?: string };
+  callback?: CallbackType;
+}) => {
+  if (callback && typeof callback === 'function') {
+    callback(error, undefined);
+  }
+  if (
+    Platform.OS === 'android' &&
+    error.code === ANDROID_BROWSER_NOT_FOUND_ERROR_CODE
+  ) {
+    throw new BrowserNotFoundError();
+  }
+  throw error;
+};
+
+/**
  * sendCommerce
  * @param {CommerceTemplateType} commerceTemplate CommerceTemplate Item
  * @param {CallbackType} [callback] callback function
@@ -229,10 +255,7 @@ export const sendCommerce = (
       return result;
     })
     .catch((error: Error) => {
-      if (callback && typeof callback === 'function') {
-        callback(error, undefined);
-      }
-      throw error;
+      handleError({ error, callback });
     });
 };
 /**
@@ -253,10 +276,7 @@ export const sendList = (
       return result;
     })
     .catch((error: Error) => {
-      if (callback && typeof callback === 'function') {
-        callback(error, undefined);
-      }
-      throw error;
+      handleError({ error, callback });
     });
 };
 /**
@@ -277,10 +297,7 @@ export const sendFeed = (
       return result;
     })
     .catch((error: Error) => {
-      if (callback && typeof callback === 'function') {
-        callback(error, undefined);
-      }
-      throw error;
+      handleError({ error, callback });
     });
 };
 /**
@@ -301,10 +318,7 @@ export const sendText = (
       return result;
     })
     .catch((error: Error) => {
-      if (callback && typeof callback === 'function') {
-        callback(error, undefined);
-      }
-      throw error;
+      handleError({ error, callback });
     });
 };
 /**
@@ -325,10 +339,7 @@ export const sendLocation = (
       return result;
     })
     .catch((error: Error) => {
-      if (callback && typeof callback === 'function') {
-        callback(error, undefined);
-      }
-      throw error;
+      handleError({ error, callback });
     });
 };
 /**
@@ -349,10 +360,7 @@ export const sendCustom = (
       return result;
     })
     .catch((error: Error) => {
-      if (callback && typeof callback === 'function') {
-        callback(error, undefined);
-      }
-      throw error;
+      handleError({ error, callback });
     });
 };
 
